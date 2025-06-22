@@ -1,7 +1,23 @@
 from typing import Optional, Literal
 from pydantic import BaseModel, model_validator
 from agents import Agent, ModelSettings
+
 from utils.common_utils import read_file
+from agent_tools.twitter_tools import (
+    post_tweet,
+    delete_tweet,
+    like_tweet,
+    unlike_tweet,
+    retweet,
+    unretweet,
+    follow_user,
+    unfollow_user,
+    search_tweets,
+    get_tweet_by_id,
+    get_user_tweets,
+    get_my_profile,
+    analyze_trending_topics,
+)
 
 
 class TwitterAgentOutput(BaseModel):
@@ -63,7 +79,21 @@ def create_twitter_agent(character_file: str = "fresh_harvest.md") -> Agent:
     return Agent(
         name="Twitter Agent",
         instructions=instructions,
-        tools=[],
+        tools=[
+            post_tweet,
+            # delete_tweet,
+            # like_tweet,
+            # unlike_tweet,
+            # retweet,
+            # unretweet,
+            # follow_user,
+            # unfollow_user,
+            # search_tweets,
+            # get_tweet_by_id,
+            # get_user_tweets,
+            # get_my_profile,
+            # analyze_trending_topics,
+        ],
         model_settings=ModelSettings(temperature=0.7),
         output_type=TwitterAgentOutput,
     )
