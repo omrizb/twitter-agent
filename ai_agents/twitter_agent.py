@@ -2,7 +2,8 @@ from typing import Optional, Literal
 from pydantic import BaseModel, model_validator
 from agents import Agent, ModelSettings
 
-from utils.common_utils import read_file
+from utils.agent_utils import custom_instructions
+from agent_tools.content_tools import create_social_content
 from agent_tools.twitter_tools import (
     post_tweet,
     delete_tweet,
@@ -69,17 +70,14 @@ class TwitterAgentOutput(BaseModel):
         return self
 
 
-def create_twitter_agent(character_file: str = "fresh_harvest.md") -> Agent:
+def create_twitter_agent() -> Agent:
     """Create a Twitter agent with specified character profile."""
-
-    instructions = read_file("ai_agents/twitter_agent_instructions.md") + read_file(
-        f"characters/{character_file}"
-    )
 
     return Agent(
         name="Twitter Agent",
-        instructions=instructions,
+        instructions=custom_instructions,
         tools=[
+            create_social_content,
             post_tweet,
             # delete_tweet,
             # like_tweet,
@@ -94,6 +92,7 @@ def create_twitter_agent(character_file: str = "fresh_harvest.md") -> Agent:
             # get_my_profile,
             # analyze_trending_topics,
         ],
-        model_settings=ModelSettings(temperature=0.7),
+        model_settings=ModelSettings(temperature=0),
+        handoff_description="A twitter agent that can fully execute actions on twitter",
         output_type=TwitterAgentOutput,
     )

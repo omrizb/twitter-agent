@@ -2,11 +2,13 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from agents import Runner
+
 from ai_agents.twitter_agent import create_twitter_agent
+from utils.agent_utils import AgentContext
 from utils.common_utils import handle_stream_events
 
-load_dotenv()
 
+load_dotenv()
 
 async def main():
     """Main function to run the Twitter AI agent."""
@@ -33,7 +35,7 @@ async def main():
     print("Twitter Agent Starting...")
 
     # Create the Twitter agent (you can specify different character files)
-    twitter_agent = create_twitter_agent("fresh_harvest.md")
+    twitter_agent = create_twitter_agent()
 
     # Get request from user
     request = input("Request: ").strip()
@@ -41,7 +43,11 @@ async def main():
     print()
 
     # Run the agent
-    result = Runner.run_streamed(twitter_agent, request)
+    result = Runner.run_streamed(
+        starting_agent=twitter_agent,
+        input=request,
+        context=AgentContext(character_file="fresh_harvest.md"),
+    )
 
     # Handle stream events
     await handle_stream_events(result)

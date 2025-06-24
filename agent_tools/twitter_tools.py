@@ -1,24 +1,10 @@
 import os
 import tweepy
 from agents import function_tool
-from pydantic import BaseModel
 from typing import Optional, Dict, Any
 from datetime import datetime, timezone
 
-
-class ToolResponse(BaseModel):
-    """
-    Standardized response format used by all Twitter agent tool functions.
-
-    Attributes:
-        success (bool): Whether the operation was successful.
-        data (Optional[dict]): Function-specific data payload if successful.
-        error (Optional[str]): Error message if the operation failed.
-    """
-
-    success: bool
-    data: Optional[Dict[str, Any]] = None
-    error: Optional[str] = None
+from utils.shared_types import ToolResponse
 
 
 class TwitterAPI:
