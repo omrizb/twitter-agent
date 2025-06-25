@@ -1,128 +1,82 @@
-# LLM Workflows
-Second example in AI agents series. Here, I use OpenAI's Agents SDK to create AVA, an artificial virtual assistant that can write emails for me.
+# Twitter Agent
 
-**Links**
-- [Video](https://youtu.be/Nm_mmRTpWLg)
-- [Blog](https://shawhin.medium.com/llm-workflows-from-automation-to-ai-agents-a62f96a0f89a)
+An AI-powered Twitter agent that can create and post social media content using OpenAI's Agents SDK. The agent generates branded content and manages Twitter interactions based on character profiles.
 
-## How to run this example
+## Features
 
-1. Clone this repo
-2. Navigate to downloaded folder and create new venv
-```
-python -m venv ava-env
-```
-3. Activate venv
-```
-# mac/linux
-source ava-env/bin/activate
+- 🤖 AI-powered content generation for tweets, replies, and DMs
+- 🎭 Customizable character profiles for different brand voices
+- 📱 Direct Twitter integration for posting content
+- 🔄 Multi-agent workflow with content creation and posting capabilities
 
-# windows
-.\ava-env\Scripts\activate.bat
-```
-4. Install dependencies
-```
-pip install -r requirements.txt
-```
-5. Follow set-up instructions below
-6. Run script
-```
-python ava.py
-```
+## Installation
 
-## Customizing AVA's Behavior
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/omrizb/twitter-agent.git
+   cd twitter-agent
+   ```
 
-### Update Personal Details and Preferences
-1. Locate the `instructions/ava.md` file in your project directory
-2. Customize the file with:
-   - Your personal details (name, role, etc.)
-   - Communication preferences
-   - Specific instructions for handling tasks
-   - Any other relevant guidelines for AVA
+2. **Install dependencies with uv**
+   ```bash
+   uv sync
+   ```
 
-## Environment Setup (.env)
+## Environment Setup
 
-1. Create a `.env` file in the root directory of the project with the following variables:
+1. **Copy the environment template**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit the `.env` file with your API credentials**
 
 ```env
+# OpenAI API
 OPENAI_API_KEY=your_openai_api_key_here
-USER_EMAIL=your_email_address
 
-# Google OAuth Credentials
-GOOGLE_CREDENTIALS_PATH=.config/ava-agent/credentials.json
-GOOGLE_TOKEN_PATH=.config/ava-agent/token.json
+# Twitter API (OAuth 1.0a)
+TWITTER_API_KEY=your_twitter_api_key
+TWITTER_API_SECRET_KEY=your_twitter_api_secret
+TWITTER_ACCESS_TOKEN=your_twitter_access_token
+TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret
 ```
 
-### Required Environment Variables:
-- `OPENAI_API_KEY`: Your OpenAI API key for accessing GPT models
-- `USER_EMAIL`: The Gmail address you want to use for this application
-- `GOOGLE_CREDENTIALS_PATH`: Path to your Google OAuth credentials file
-- `GOOGLE_TOKEN_PATH`: Path where the Google OAuth token will be stored
+### Getting Twitter API Credentials
 
-## Google OAuth Setup
+1. Go to [Twitter Developer Portal](https://developer.twitter.com/)
+2. Create a new app or use an existing one
+3. Generate OAuth 1.0a credentials (API Key, API Secret, Access Token, Access Token Secret)
+4. Ensure your app has read and write permissions
 
-### 1. Create Project Directory Structure
+## Running the Agent
 
-First, create the required directory structure:
 ```bash
-mkdir -p .config/ava-agent
+uv run python main.py
 ```
 
-### 2. Set Up Google Cloud Project
+The agent will prompt you for a request. Examples:
+- "Post a tweet about fresh organic strawberries"
+- "Reply to the customer who thanked us for avocado tips"
+- "Create a friendly DM about order confirmation"
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project or select an existing one
-3. Enable the Gmail API:
-   - In the navigation menu, go to "APIs & Services" > "Library"
-   - Search for "Gmail API"
-   - Click "Enable"
+## Customizing Character Profiles
 
-### 3. Create OAuth Credentials
+Edit character files in the `characters/` directory to change the agent's personality and brand voice. The default character is `fresh_harvest.md`.
 
-1. In the Google Cloud Console:
-   - Go to "APIs & Services" > "Credentials"
-   - Click "Create Credentials" > "OAuth client ID"
-   - Choose "Desktop application" as the application type
-   - Give it a name (e.g., "AVA Gmail Client")
-   - Click "Create"
+## Project Structure
 
-2. Download the credentials:
-   - After creation, click "Download JSON"
-   - Save the downloaded file as `credentials.json` in `.config/ava-agent/`
-   - The file should contain your client ID and client secret
-
-### 4. Configure OAuth Consent Screen
-
-1. In the Google Cloud Console:
-   - Go to "APIs & Services" > "OAuth consent screen"
-   - Choose "External" user type
-   - Fill in the required information:
-     - App name
-     - User support email
-     - Developer contact information
-   - Add the Gmail API scope: `https://www.googleapis.com/auth/gmail.modify`
-   - Add your email as a test user
-   - Complete the configuration
-
-## First Run
-
-When you first run the application, it will:
-1. Check for the presence of `token.json`
-2. If not found, it will initiate the Google OAuth authentication flow
-3. Guide you through the authentication process in your browser:
-   - You'll be asked to sign in to your Google account
-   - Grant the requested permissions
-   - The application will automatically save the token
-4. Generate and store the token automatically
+```
+twitter-agent/
+├── ai_agents/          # Agent definitions and instructions
+├── agent_tools/        # Twitter API tools and content creation
+├── characters/         # Brand character profiles
+├── utils/             # Shared utilities and types
+└── main.py           # Main entry point
+```
 
 ## Security Notes
 
-### File Protection
-- Never commit your `.env` file or `token.json` to version control
-- Keep your OpenAI API key and Google credentials secure
-- Add the following to your `.gitignore`:
-  ```
-  .env
-  .config/ava-agent/token.json
-  .config/ava-agent/credentials.json
-  ``` 
+- Never commit your `.env` file to version control
+- Keep your API keys secure
+- Add `.env` to your `.gitignore` file

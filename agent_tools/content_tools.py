@@ -1,9 +1,10 @@
-from typing import Literal, Optional, List
+from typing import Literal, Optional
 from datetime import datetime, timezone
 from pydantic import BaseModel
-from agents import Runner, function_tool
+from agents import Runner, RunContextWrapper, function_tool
 from ai_agents.content_creator_agent import create_content_creator_agent
 
+from utils.agent_utils import AgentContext
 from utils.shared_types import ToolResponse
 
 
@@ -18,7 +19,7 @@ class ContentCreatorInput(BaseModel):
 
 
 @function_tool
-async def create_social_content(input: ContentCreatorInput) -> ToolResponse:
+async def create_social_content(context: RunContextWrapper[AgentContext], input: ContentCreatorInput) -> ToolResponse:
     """
     Generate branded social media content using the content creator agent.
 
@@ -29,7 +30,7 @@ async def create_social_content(input: ContentCreatorInput) -> ToolResponse:
             - content_type (Literal["tweet", "reply", "dm", "email", "story", "post"]): Type of content to generate.
             - content_max_length (Optional[int]): Maximum character limit for the content.
             - tone (Optional[str]): Desired tone or style (e.g., "professional", "casual", "friendly").
-            - context (Optional[str]): Additional context or background information.
+            - context (Optional[str]): Additional context or background information (e.g. conversation snippet, related news article, etc.).
             - require_variations (Optional[bool]): Whether to include alternative versions (default: False).
 
     Returns:
@@ -58,8 +59,14 @@ async def create_social_content(input: ContentCreatorInput) -> ToolResponse:
         if input.require_variations:
             mission += " Include 2-3 alternative versions."
 
+        character_file = context.context.character_file
+
         # Run agent
-        result = await Runner.run(agent, mission)
+        result = await Runner.run(
+            agent,
+            mission,
+            context=AgentContext(character_file=character_file),
+        )
 
         return ToolResponse(
             success=True,
